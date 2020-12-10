@@ -25,17 +25,28 @@ MishDecomposition::MishDecomposition() {
             return false;
         }
 
+        // const auto inputType = mish->input_value(0).get_element_type();
+        // const auto addConst = ngraph::opset5::Constant::create(inputType, ngraph::Shape{}, {1.0f});
+
+        // const auto exp = std::make_shared<ngraph::opset5::Exp>(mish->input_value(0));
+        // const auto add = std::make_shared<ngraph::opset5::Add>(exp, addConst);
+        // const auto log = std::make_shared<ngraph::opset5::Log>(add);
+        // const auto tanh = std::make_shared<ngraph::opset5::Tanh>(log);
+        // const auto mul = std::make_shared<ngraph::opset5::Multiply>(mish->input_value(0), tanh);
+
+        // mul->set_friendly_name(mish->get_friendly_name());
+        // ngraph::copy_runtime_info(mish, {addConst, exp, add, log, tanh, mul});
+        // ngraph::replace_node(mish, mul);
+
+
         const auto inputType = mish->input_value(0).get_element_type();
         const auto addConst = ngraph::opset5::Constant::create(inputType, ngraph::Shape{}, {1.0f});
 
-        const auto exp = std::make_shared<ngraph::opset5::Exp>(mish->input_value(0));
-        const auto add = std::make_shared<ngraph::opset5::Add>(exp, addConst);
-        const auto log = std::make_shared<ngraph::opset5::Log>(add);
-        const auto tanh = std::make_shared<ngraph::opset5::Tanh>(log);
+        const auto tanh = std::make_shared<ngraph::opset5::Mish>(mish->input_value(0));
         const auto mul = std::make_shared<ngraph::opset5::Multiply>(mish->input_value(0), tanh);
 
         mul->set_friendly_name(mish->get_friendly_name());
-        ngraph::copy_runtime_info(mish, {addConst, exp, add, log, tanh, mul});
+        ngraph::copy_runtime_info(mish, {tanh, mul});
         ngraph::replace_node(mish, mul);
 
         return true;

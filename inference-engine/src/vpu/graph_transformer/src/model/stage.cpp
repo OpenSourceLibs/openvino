@@ -257,6 +257,8 @@ void StageNode::serialize(BlobSerializer& serializer) const {
     // Check that we don't serialize Special stage.
     IE_ASSERT(category() != StageCategory::Special);
 
+    std::cout << type() << ", ";
+
     mv_stage_header stageHdr = {
         checked_cast<uint32_t>(0u),
         checked_cast<uint32_t>(_type),
